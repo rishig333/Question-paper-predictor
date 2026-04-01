@@ -28,8 +28,8 @@ SQLAlchemy==2.0.19
 # NLP (optional)
 spacy==3.7.2
 gunicorn==21.2.0
-pandas==2.2.2
-setuptools==70.0.0
-wheel==0.43.0
+pandas==1.5.3
+setuptools>=65.0.0
+wheel
 gunicorn==21.2.0
 
