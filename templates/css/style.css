@@ -1,0 +1,215 @@
+/* Question Paper Predictor - Main Stylesheet */
+
+:root {
+  --primary: #667eea;
+  --primary-dark: #5a67d8;
+  --secondary: #764ba2;
+  --success: #48bb78;
+  --warning: #ed8936;
+  --danger: #f56565;
+  --dark: #2d3748;
+  --light: #f7fafc;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+}
+
+/* Navbar Styling */
+.navbar {
+  background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--secondary) 100%
+  ) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+/* Card Styling */
+.card {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  color: white;
+  border-radius: 15px 15px 0 0 !important;
+  font-weight: 600;
+}
+
+/* Button Styling */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  border: none;
+  padding: 10px 25px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+/* Upload Area */
+.upload-area {
+  border: 2px dashed #cbd5e0;
+  border-radius: 15px;
+  padding: 40px;
+  text-align: center;
+  background: var(--light);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.upload-area:hover {
+  border-color: var(--primary);
+  background: #edf2f7;
+}
+
+.upload-area.dragover {
+  border-color: var(--primary);
+  background: #e6f0ff;
+}
+
+/* Progress Bar */
+.progress {
+  height: 25px;
+  border-radius: 12px;
+  background-color: #e2e8f0;
+}
+
+.progress-bar {
+  line-height: 25px;
+  font-weight: 600;
+  border-radius: 12px;
+}
+
+/* Prediction Badges */
+.prediction-high {
+  background-color: var(--success);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+}
+
+.prediction-medium {
+  background-color: var(--warning);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+}
+
+.prediction-low {
+  background-color: var(--danger);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+}
+
+/* Statistics Cards */
+.stat-card {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+}
+
+.stat-card i {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+/* File List */
+.file-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.file-item {
+  background: white;
+  border-left: 4px solid var(--primary);
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Table Styling */
+.table {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table thead th {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  color: white;
+  font-weight: 600;
+  border: none;
+}
+
+/* Footer */
+footer {
+  background: white;
+  margin-top: auto;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .stat-number {
+    font-size: 1.5rem;
+  }
+
+  .card-header h5 {
+    font-size: 1rem;
+  }
+
+  .btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+}

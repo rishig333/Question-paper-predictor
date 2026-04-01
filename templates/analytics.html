@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - Question Paper Predictor{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="text-center mb-4">
+            <i class="fas fa-chart-pie text-primary"></i> Analytics Dashboard
+        </h1>
+    </div>
+</div>
+
+{% if papers_count == 0 %}
+<div class="alert alert-info text-center">
+    <i class="fas fa-info-circle"></i> No papers in database. <a href="{{ url_for('upload') }}">Upload some papers</a> to see analytics.
+</div>
+{% else %}
+
+<!-- Summary Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">Total Papers</h5>
+                <h2>{{ papers_count }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">Total Questions</h5>
+                <h2>0</h2> <!-- This would be calculated from your data -->
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title">Unique Years</h5>
+                <h2>0</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">Subjects</h5>
+                <h2>0</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts -->
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Question Type Distribution</h5>
+            </div>
+            <div class="card-body">
+                {% if type_chart %}
+                <div id="typeChart"></div>
+                <script>
+                    var typeChart = {{ type_chart | safe }};
+                    Plotly.newPlot('typeChart', typeChart.data, typeChart.layout);
+                </script>
+                {% else %}
+                <p class="text-center text-muted my-5">No data available</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Papers by Year</h5>
+            </div>
+            <div class="card-body">
+                {% if year_chart %}
+                <div id="yearChart"></div>
+                <script>
+                    var yearChart = {{ year_chart | safe }};
+                    Plotly.newPlot('yearChart', yearChart.data, yearChart.layout);
+                </script>
+                {% else %}
+                <p class="text-center text-muted my-5">No data available</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Topic Trends -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-chart-line"></i> Topic Trends Over Time</h5>
+            </div>
+            <div class="card-body">
+                <div id="topicChart"></div>
+                <script>
+                    // Sample topic trend data - replace with actual data
+                    var topicData = [{
+                        x: [2020, 2021, 2022, 2023, 2024],
+                        y: [2, 3, 5, 4, 6],
+                        name: 'Algorithms',
+                        type: 'scatter'
+                    }, {
+                        x: [2020, 2021, 2022, 2023, 2024],
+                        y: [1, 2, 2, 3, 4],
+                        name: 'Data Structures',
+                        type: 'scatter'
+                    }];
+                    
+                    Plotly.newPlot('topicChart', topicData, {
+                        title: 'Topic Frequency by Year',
+                        xaxis: { title: 'Year' },
+                        yaxis: { title: 'Frequency' }
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+{% endblock %}

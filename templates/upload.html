@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Papers - Question Paper Predictor{% endblock %}
+
+{% block extra_css %}
+<style>
+    .upload-area {
+        border: 2px dashed #ccc;
+        border-radius: 10px;
+        padding: 40px;
+        text-align: center;
+        background: #f8f9fa;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .upload-area:hover {
+        border-color: #667eea;
+        background: #f0f3ff;
+    }
+    .upload-area.dragover {
+        border-color: #667eea;
+        background: #e8ecff;
+    }
+    .file-list {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+    .file-item {
+        padding: 10px;
+        margin: 5px 0;
+        background: #f8f9fa;
+        border-radius: 5px;
+        border-left: 3px solid #667eea;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="text-center mb-4">
+            <i class="fas fa-cloud-upload-alt text-primary"></i> Upload Question Papers
+        </h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <form method="POST" enctype="multipart/form-data" id="uploadForm">
+            <!-- File Upload Area -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="upload-area" id="dropArea">
+                        <i class="fas fa-file-upload fa-4x text-primary mb-3"></i>
+                        <h4>Drag & Drop Files Here</h4>
+                        <p class="text-muted">or</p>
+                        <button type="button" class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                            <i class="fas fa-folder-open"></i> Browse Files
+                        </button>
+                        <input type="file" name="file" id="fileInput" multiple accept=".pdf,.png,.jpg,.jpeg,.bmp,.tiff" style="display: none;">
+                        <p class="mt-3 text-muted small">Supported formats: PDF, PNG, JPG, JPEG, BMP, TIFF (Max 100MB)</p>
+                    </div>
+                    
+                    <!-- File List -->
+                    <div id="fileList" class="file-list mt-3"></div>
+                </div>
+            </div>
+            
+            <!-- Metadata Form -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Paper Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="subject" class="form-label">Subject</label>
+                            <input type="text" class="form-control" id="subject" name="subject" value="Computer Science" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="exam_board" class="form-label">Exam Board</label>
+                            <select class="form-select" id="exam_board" name="exam_board" required>
+                                <option value="AQA">AQA</option>
+                                <option value="Edexcel">Edexcel</option>
+                                <option value="OCR">OCR</option>
+                                <option value="CIE">CIE</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="year" class="form-label">Year</label>
+                            <input type="number" class="form-control" id="year" name="year" 
+                                   value="{{ now.year if now else 2024 }}" 
+                                   min="2000" 
+                                   max="{{ (now.year + 1) if now else 2025 }}" 
+                                   required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="semester" class="form-label">Semester</label>
+                            <select class="form-select" id="semester" name="semester" required>
+                                <option value="Spring">Spring</option>
+                                <option value="Summer">Summer</option>
+                                <option value="Fall">Fall</option>
+                                <option value="Winter">Winter</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Submit Button -->
+            <div class="text-center">
+                <button type="submit" class="btn btn-success btn-lg" id="submitBtn" disabled>
+                    <i class="fas fa-cogs"></i> Process Papers
+                </button>
+                <div class="spinner-border text-primary d-none" id="loading" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dropArea = document.getElementById('dropArea');
+    const fileInput = document.getElementById('fileInput');
+    const fileList = document.getElementById('fileList');
+    const submitBtn = document.getElementById('submitBtn');
+    const loading = document.getElementById('loading');
+    const form = document.getElementById('uploadForm');
+    
+    let selectedFiles = [];
+    
+    // Prevent default drag behaviors
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    // Highlight drop area on drag over
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+    });
+    
+    function highlight() {
+        dropArea.classList.add('dragover');
+    }
+    
+    function unhighlight() {
+        dropArea.classList.remove('dragover');
+    }
+    
+    // Handle dropped files
+    dropArea.addEventListener('drop', handleDrop, false);
+    
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        handleFiles(files);
+    }
+    
+    // Handle file input change
+    fileInput.addEventListener('change', function() {
+        handleFiles(this.files);
+    });
+    
+    function handleFiles(files) {
+        selectedFiles = [...files];
+        updateFileList();
+        submitBtn.disabled = selectedFiles.length === 0;
+    }
+    
+    function updateFileList() {
+        fileList.innerHTML = '';
+        selectedFiles.forEach((file, index) => {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-file-pdf text-danger"></i>
+                        <strong>${file.name}</strong>
+                        <small class="text-muted ms-2">(${(file.size / 1024).toFixed(2)} KB)</small>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="removeFile(${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            fileList.appendChild(fileItem);
+        });
+    }
+    
+    window.removeFile = function(index) {
+        selectedFiles.splice(index, 1);
+        updateFileList();
+        submitBtn.disabled = selectedFiles.length === 0;
+    };
+    
+    // Handle form submit
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Create FormData
+        const formData = new FormData();
+        selectedFiles.forEach(file => {
+            formData.append('file', file);
+        });
+        formData.append('subject', document.getElementById('subject').value);
+        formData.append('exam_board', document.getElementById('exam_board').value);
+        formData.append('year', document.getElementById('year').value);
+        formData.append('semester', document.getElementById('semester').value);
+        
+        // Show loading
+        submitBtn.disabled = true;
+        loading.classList.remove('d-none');
+        
+        // Send request
+        fetch('{{ url_for("upload") }}', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (response.redirected) {
+                window.location.href = response.url;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            loading.classList.add('d-none');
+            submitBtn.disabled = false;
+            alert('Error uploading files. Please try again.');
+        });
+    });
+});
+</script>
+{% endblock %}

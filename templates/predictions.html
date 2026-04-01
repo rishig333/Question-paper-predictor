@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Predictions - Question Paper Predictor{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="text-center mb-4">
+            <i class="fas fa-magic text-primary"></i> 2026 Question Predictions
+        </h1>
+    </div>
+</div>
+
+{% if predictions %}
+<!-- Confidence Legend -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5>Confidence Levels:</h5>
+                <span class="badge bg-success me-2">High (70-100%)</span>
+                <span class="badge bg-warning me-2">Medium (40-69%)</span>
+                <span class="badge bg-danger me-2">Low (0-39%)</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Predictions List -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-list"></i> Top Predicted Questions</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Question</th>
+                                <th>Topic</th>
+                                <th>Marks</th>
+                                <th>Probability</th>
+                                <th>Confidence</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pred in predictions %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ pred.question_text[:100] }}...</td>
+                                <td>{{ pred.topic }}</td>
+                                <td>{{ pred.suggested_marks }}</td>
+                                <td>
+                                    <div class="progress">
+                                        <div class="progress-bar 
+                                            {% if pred.probability > 0.7 %}bg-success
+                                            {% elif pred.probability > 0.4 %}bg-warning
+                                            {% else %}bg-danger{% endif %}"
+                                            role="progressbar"
+                                            style="width: {{ pred.probability * 100 }}%"
+                                            aria-valuenow="{{ pred.probability * 100 }}"
+                                            aria-valuemin="0"
+                                            aria-valuemax="100">
+                                            {{ (pred.probability * 100)|int }}%
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge 
+                                        {% if pred.confidence == 'High' %}bg-success
+                                        {% elif pred.confidence == 'Medium' %}bg-warning
+                                        {% else %}bg-danger{% endif %}">
+                                        {{ pred.confidence }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Study Recommendations -->
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-check-circle"></i> High Priority Topics</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for pred in predictions if pred.confidence == 'High' %}
+                    <li class="list-group-item">
+                        <i class="fas fa-star text-warning"></i> {{ pred.topic }}
+                        <span class="badge bg-success float-end">{{ (pred.probability * 100)|int }}%</span>
+                    </li>
+                    {% else %}
+                    <li class="list-group-item text-muted">No high priority topics yet</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-chart-line"></i> Study Tips</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li class="mb-2"><i class="fas fa-clock text-primary"></i> Focus on high probability topics first</li>
+                    <li class="mb-2"><i class="fas fa-repeat text-primary"></i> Topics appearing frequently in past papers</li>
+                    <li class="mb-2"><i class="fas fa-arrow-up text-primary"></i> Topics with increasing trends</li>
+                    <li class="mb-2"><i class="fas fa-calculator text-primary"></i> Practice numerical questions</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<div class="alert alert-info text-center">
+    <i class="fas fa-info-circle"></i> Not enough data for predictions. 
+    <a href="{{ url_for('upload') }}">Upload more papers</a> to get accurate predictions.
+</div>
+{% endif %}
+{% endblock %}

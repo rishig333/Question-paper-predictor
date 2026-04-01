@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Question Paper Predictor{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 text-center mb-5">
+        <h1 class="display-4 text-primary">
+            <i class="fas fa-robot"></i> RISHI'S AI-Powered Question Paper Predictor
+        </h1>
+        <p class="lead">Upload past papers and let AI predict your upcoming exam questions</p>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-5">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-body text-center">
+                <i class="fas fa-file-pdf fa-3x mb-3"></i>
+                <h5 class="card-title">Total Papers</h5>
+                <h2>{{ stats.total_papers }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body text-center">
+                <i class="fas fa-question-circle fa-3x mb-3"></i>
+                <h5 class="card-title">Questions</h5>
+                <h2>{{ stats.total_questions }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info mb-3">
+            <div class="card-body text-center">
+                <i class="fas fa-calendar-alt fa-3x mb-3"></i>
+                <h5 class="card-title">Years</h5>
+                <h2>{{ stats.unique_years }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-body text-center">
+                <i class="fas fa-book fa-3x mb-3"></i>
+                <h5 class="card-title">Subjects</h5>
+                <h2>{{ stats.unique_subjects }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features -->
+<div class="row">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-cloud-upload-alt fa-4x text-primary mb-3"></i>
+                <h5 class="card-title">Easy Upload</h5>
+                <p class="card-text">Upload PDF or image files. Our system automatically extracts text using advanced OCR.</p>
+                <a href="{{ url_for('upload') }}" class="btn btn-primary">Upload Now</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-brain fa-4x text-success mb-3"></i>
+                <h5 class="card-title">AI Analysis</h5>
+                <p class="card-text">Machine learning algorithms analyze patterns across years to identify important topics.</p>
+                <a href="{{ url_for('analytics') }}" class="btn btn-success">View Analytics</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-chart-line fa-4x text-info mb-3"></i>
+                <h5 class="card-title">Smart Predictions</h5>
+                <p class="card-text">Get probability scores for questions likely to appear in upcoming exams.</p>
+                <a href="{{ url_for('predictions') }}" class="btn btn-info text-white">See Predictions</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- How it works -->
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-cogs"></i> How It Works</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 text-center">
+                        <div class="step-circle">1</div>
+                        <h5>Upload Papers</h5>
+                        <p>Upload past question papers (PDF or images)</p>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="step-circle">2</div>
+                        <h5>OCR Extraction</h5>
+                        <p>Text is extracted using AI-powered OCR</p>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="step-circle">3</div>
+                        <h5>Pattern Analysis</h5>
+                        <p>ML algorithms identify patterns and trends</p>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="step-circle">4</div>
+                        <h5>Get Predictions</h5>
+                        <p>Receive probability scores for future questions</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.step-circle {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0 auto 20px;
+}
+</style>
+{% endblock %}
